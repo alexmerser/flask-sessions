@@ -13,11 +13,11 @@ Links
 
 """
 from setuptools import setup
-
+from docs import conf
 
 setup(
     name='Flask-Sessions',
-    version='0.1.2',
+    version=conf.version,
     url='https://github.com/jefurry/flask-sessions',
     license='BSD',
     author='Jefurry',
