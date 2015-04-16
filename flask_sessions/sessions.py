@@ -117,7 +117,8 @@ class RedisSessionInterface(SessionInterface):
         val = self.serializer.dumps(dict(session))
         self.redis.setex(self.key_prefix + session.sid, val,
                          int(app.permanent_session_lifetime.total_seconds()))
-        response.set_cookie(app.session_cookie_name, session.sid,
+        if session.modified:
+            response.set_cookie(app.session_cookie_name, session.sid,
                             expires=expires, httponly=httponly,
                             domain=domain, path=path, secure=secure)
 
@@ -220,7 +221,8 @@ class MemcachedSessionInterface(SessionInterface):
         val = self.serializer.dumps(dict(session))
         self.client.set(full_session_key, val, self._get_memcache_timeout(
                         int(app.permanent_session_lifetime.total_seconds())))
-        response.set_cookie(app.session_cookie_name, session.sid,
+        if session.modified:
+            response.set_cookie(app.session_cookie_name, session.sid,
                             expires=expires, httponly=httponly,
                             domain=domain, path=path, secure=secure)
 
@@ -282,7 +284,8 @@ class FileSystemSessionInterface(SessionInterface):
         data = dict(session)
         self.cache.set(self.key_prefix + session.sid, data,
                          int(app.permanent_session_lifetime.total_seconds()))
-        response.set_cookie(app.session_cookie_name, session.sid,
+        if session.modified:
+            response.set_cookie(app.session_cookie_name, session.sid,
                             expires=expires, httponly=httponly,
                             domain=domain, path=path, secure=secure)
 
@@ -356,6 +359,7 @@ class MongoDBSessionInterface(SessionInterface):
                           {'id': store_id,
                            'val': val,
                            'expiration': expires}, True)
-        response.set_cookie(app.session_cookie_name, session.sid,
+        if session.modified:
+            response.set_cookie(app.session_cookie_name, session.sid,
                             expires=expires, httponly=httponly,
                             domain=domain, path=path, secure=secure)
